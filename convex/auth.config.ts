@@ -1,10 +1,12 @@
-// convex/auth.config.ts
-export default {
+import { AuthConfig } from "convex/server";
+
+const authConfig = {
   providers: [
     {
-      // REPLACE with your Clerk Issuer URL (from Clerk Dashboard -> Configure -> JWT Templates)
-      domain: "https://your-clerk-issuer-url.clerk.accounts.dev", 
+      domain: "https://clerk.aegislogistics.co.uk",
       applicationID: "convex",
     },
   ],
-};
+} satisfies AuthConfig;
+
+export default authConfig;
