@@ -5,7 +5,7 @@ export default function Home() {
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6 py-12">
       <div className="flex max-w-3xl flex-col gap-6 rounded-3xl border border-slate-200 bg-white px-10 py-12 shadow-xl shadow-slate-200/60">
         <p className="text-[11px] uppercase tracking-[0.3em] text-slate-500">
-          Vectis One
+          Aegis Logistics
         </p>
         <h1 className="text-3xl font-semibold text-slate-900">
           Intelligence for the Industrial World.

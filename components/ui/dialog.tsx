@@ -25,24 +25,28 @@ export function Dialog({ open: controlledOpen, onOpenChange, children }: DialogP
 
 type DialogTriggerProps = {
   asChild?: boolean;
-  children: React.ReactElement;
+  children: React.ReactNode;
 };
 
 export function DialogTrigger({ asChild, children }: DialogTriggerProps) {
   const ctx = useContext(DialogContext);
-  if (!ctx) return children;
+  if (!ctx) return <>{children}</>;
 
-  const onClick = (e: React.MouseEvent) => {
-    children.props.onClick?.(e);
+  const handleClick = (e: React.MouseEvent) => {
+    if (React.isValidElement(children)) {
+      const childOnClick = (children.props as { onClick?: (e: React.MouseEvent) => void })?.onClick;
+      childOnClick?.(e);
+    }
     ctx.setOpen(true);
   };
 
-  if (asChild) {
-    return React.cloneElement(children, { onClick });
+  if (asChild && React.isValidElement(children)) {
+    const childProps = (children.props as any) || {};
+    return React.cloneElement(children, { ...childProps, onClick: handleClick });
   }
 
   return (
-    <button onClick={onClick} type="button">
+    <button onClick={handleClick} type="button">
       {children}
     </button>
   );

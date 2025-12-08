@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Id } from "@/convex/_generated/dataModel";
 
 type IntelligenceModalProps = {
-  appId: string;
+  appId: Id<"planning_applications">;
 };
 
 export function IntelligenceModal({ appId }: IntelligenceModalProps) {

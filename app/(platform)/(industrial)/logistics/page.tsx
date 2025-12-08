@@ -1,9 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
+import dynamic from "next/dynamic";
 import { api } from "@/convex/_generated/api";
-import { LocationMap } from "@/components/logistics/LocationMap";
+
+const LocationMap = dynamic(() => import("@/components/logistics/LocationMap").then(m => m.LocationMap), {
+  ssr: false,
+});
 
 export default function LogisticsPage() {
   const location = useQuery(api.logistics.getLocationByUprn, { uprn: "100060485210" });
@@ -11,7 +15,7 @@ export default function LogisticsPage() {
     api.logistics.getCustomerProfile,
     location ? { locationId: location._id } : "skip"
   );
-  const runAnalysis = useMutation(api.analysis.generateSalesNarrative);
+  const runAnalysis = useAction(api.analysis.generateSalesNarrative);
   const seed = useMutation(api.logistics.seedLogisticsData);
   const [analyzing, setAnalyzing] = useState(false);
 

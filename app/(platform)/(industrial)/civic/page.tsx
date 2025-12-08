@@ -4,10 +4,11 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { FileText, ShieldAlert } from "lucide-react";
 import { IntelligenceModal } from "@/components/civic/IntelligenceModal";
+import { Id } from "@/convex/_generated/dataModel";
 
 type PlanningData = {
   application?: {
-    _id?: string;
+    _id?: Id<"planning_applications">;
     title?: string;
     address?: string;
     ref?: string;

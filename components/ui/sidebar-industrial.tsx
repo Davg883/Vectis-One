@@ -120,14 +120,12 @@ export function SidebarIndustrial() {
               <Link
                 key={route.href}
                 href={route.href}
-                aria-disabled={route.disabled}
                 className={cn(
                   "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                   "ring-1 ring-transparent hover:ring-white/10",
                   isActive
                     ? "bg-white/10 text-white ring-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
-                    : "text-white/70 hover:bg-white/5 hover:text-white",
-                  route.disabled && "cursor-not-allowed opacity-50 pointer-events-none"
+                    : "text-white/70 hover:bg-white/5 hover:text-white"
                 )}
               >
                 <span
@@ -147,11 +145,9 @@ export function SidebarIndustrial() {
                     {route.description}
                   </span>
                 </div>
-                {!route.disabled && (
-                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-white/70">
-                    Link
-                  </span>
-                )}
+                <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-white/70">
+                  Link
+                </span>
               </Link>
             );
           })}

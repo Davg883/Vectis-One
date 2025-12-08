@@ -29,7 +29,7 @@ export default function AegisMissionControl() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Aegis</p>
-          <h1 className="text-3xl font-semibold text-slate-900">Vectis One | Mission Control</h1>
+          <h1 className="text-3xl font-semibold text-slate-900">Aegis Logistics | Mission Control</h1>
           <p className="text-sm text-slate-600">Aggregated view across fleet, fuel, and intelligence.</p>
         </div>
         <div className="flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm ring-1 ring-slate-200">

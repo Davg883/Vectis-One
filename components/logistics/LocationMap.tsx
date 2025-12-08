@@ -32,7 +32,7 @@ export function LocationMap({ lat, lng }: LocationMapProps) {
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={[lat, lng]} icon={redMarker} />
+        <Marker position={[lat, lng]} icon={redMarker as any} />
       </MapContainer>
     </div>
   );

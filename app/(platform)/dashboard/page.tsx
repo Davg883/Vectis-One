@@ -87,10 +87,10 @@ export default function DashboardGateway() {
             SYSTEMS NOMINAL
           </div>
           <h1 className="text-5xl md:text-6xl font-black text-slate-900 tracking-tight mb-4">
-            Vectis One <span className="text-slate-400 font-light">| Interface</span>
+            Aegis Logistics <span className="text-slate-400 font-light">| Interface</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl leading-relaxed">
-            Welcome to Vectis One. Select your operational environment. All telemetry streams are synchronized.
+            Welcome to Aegis Logistics. Select your operational environment. All telemetry streams are synchronized.
           </p>
         </div>
 
@@ -113,7 +113,7 @@ export default function DashboardGateway() {
                     <mod.icon className={`w-8 h-8 ${mod.color}`} />
                   </div>
                   {mod.status === "beta" ? (
-                    <Badge variant="secondary" className="bg-slate-100 text-slate-500 border-slate-200">
+                    <Badge variant="outline" className="bg-slate-100 text-slate-500 border-slate-200">
                       WAITLIST
                     </Badge>
                   ) : (

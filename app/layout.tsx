@@ -16,9 +16,12 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vectis One · Mission Control",
-  description:
-    "Industrial operating system mission control for orchestrating transport, safety, and civic infrastructure.",
+  title: "Aegis Logistics | Mission Control",
+  description: "Intelligence for the Industrial World",
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({

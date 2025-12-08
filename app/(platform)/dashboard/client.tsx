@@ -39,15 +39,13 @@ export default function ClientDashboard() {
   const data = useQuery(api.dashboard.getExecutiveSummary) as ExecSummary | undefined;
   const seedTransport = useMutation(api.transport.seedTransportData);
   const seedAegis = useMutation(api.aegis.seedAegisData);
-  const seedCivic = useMutation(api.civic.seedCivicData);
-  const seedSite = useMutation(api.site.seedSiteData);
+  const seedCivic = useMutation(api.civic.seedPlanningData);
 
   const handleGlobalSim = async () => {
     await Promise.all([
       seedTransport().catch(() => undefined),
       seedAegis().catch(() => undefined),
       seedCivic().catch(() => undefined),
-      seedSite().catch(() => undefined),
     ]);
   };
 
@@ -135,7 +133,7 @@ export default function ClientDashboard() {
         </p>
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-semibold text-slate-900">
-            Vectis One | Mission Control
+            Aegis Logistics | Mission Control
           </h1>
           <button
             type="button"
@@ -156,11 +154,19 @@ export default function ClientDashboard() {
             key={card.title}
             className="flex flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-100"
           >
+            {/*
+              Normalize icon to capitalized component for TSX compliance.
+            */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-50 text-slate-900 ring-1 ring-slate-100">
-                  <card.icon className="h-5 w-5" />
-                </div>
+                {(() => {
+                  const CardIcon = card.icon;
+                  return (
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-50 text-slate-900 ring-1 ring-slate-100">
+                      <CardIcon className="h-5 w-5" />
+                    </div>
+                  );
+                })()}
                 <p className="text-sm font-semibold text-slate-900">
                   {card.title}
                 </p>
@@ -197,7 +203,7 @@ export default function ClientDashboard() {
             </div>
           )}
           {feed.map((item, idx) => {
-            const icon =
+            const Icon =
               item.type === "maintenance"
                 ? Truck
                 : item.type === "legal"
@@ -209,7 +215,7 @@ export default function ClientDashboard() {
                 className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2"
               >
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-slate-900 ring-1 ring-slate-200">
-                  <icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" />
                 </div>
                 <div className="flex flex-col">
                   <p className="text-sm font-semibold text-slate-900">{item.title}</p>
