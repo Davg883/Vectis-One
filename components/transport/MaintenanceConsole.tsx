@@ -50,6 +50,8 @@ type JobCard = {
     total: number;
     vehicleMatch: boolean;
     items: string;
+    summary?: string;
+    extractedReg?: string | null;
   };
 };
 
