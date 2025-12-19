@@ -13,7 +13,7 @@ declare module "leaflet" {
     iconAnchor?: [number, number];
   }
 
-  export class Icon<T = any> {
+  export class Icon {
     constructor(options?: IconOptions);
   }
 

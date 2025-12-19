@@ -1,12 +1,9 @@
-import { AuthConfig } from "convex/server";
-
-const authConfig = {
+export default {
   providers: [
     {
-      domain: "https://clerk.aegislogistics.co.uk",
+      // https://peaceful-weevil-10.clerk.accounts.dev
+      domain: "https://peaceful-weevil-10.clerk.accounts.dev",
       applicationID: "convex",
     },
   ],
-} satisfies AuthConfig;
-
-export default authConfig;
+};

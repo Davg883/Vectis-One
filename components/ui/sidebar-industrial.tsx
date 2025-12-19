@@ -3,84 +3,70 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { OrganizationSwitcher } from "@clerk/nextjs";
 import {
   HardHat,
   Hexagon,
-  Home,
   LayoutGrid,
   LayoutDashboard,
-  Landmark,
   ShieldCheck,
   Truck,
 } from "lucide-react";
 
-const routes = [
+type EnabledModule = "transport" | "depot" | "legal" | "civic";
+type Route = {
+  key: string;
+  label: string;
+  description: string;
+  icon: typeof LayoutDashboard;
+  href: string;
+  requires?: EnabledModule;
+};
+
+const ROUTES: Route[] = [
   {
-    label: "Mission Control (Aegis)",
+    key: "mission",
+    label: "Mission Control",
     description: "Command & compliance nerve centre",
     icon: LayoutDashboard,
     href: "/aegis",
-    subItems: [
-      { label: "Command Centre", href: "/aegis" },
-      { label: "Legal Defence", href: "/aegis/legal" },
-      { label: "Compliance Overview", href: "/aegis/compliance" },
-    ],
   },
   {
-    label: "Legal Defence",
-    description: "War room & filings",
-    href: "/aegis/legal",
-    icon: ShieldCheck,
-    color: "text-indigo-500",
-    active: true,
-    subItems: [
-      { label: "War Room", href: "/aegis/legal" },
-      { label: "Active Cases", href: "/aegis/cases" },
-      { label: "Evidence Vault", href: "/aegis/evidence" },
-      { label: "Regulatory Filings", href: "/aegis/filings" },
-    ],
-  },
-  {
+    key: "transport",
     label: "TransportOS",
-    description: "Fleet & routing",
+    description: "Vehicles, defects, inspections",
     icon: Truck,
     href: "/transport",
+    requires: "transport",
   },
   {
+    key: "depot",
     label: "DepotOS",
-    description: "Fuel storage & infrastructure",
+    description: "Fuel tanks and stock levels",
     icon: HardHat,
     href: "/depot",
-    subItems: [
-      { label: "Stock Levels", href: "/depot" },
-      { label: "Equipment Log", href: "/depot/equipment" },
-    ],
+    requires: "depot",
   },
   {
-    label: "LogisticsOS",
-    description: "Locations & sales intelligence",
-    icon: Landmark,
-    href: "/logistics",
-    subItems: [
-      { label: "Customer Intelligence", href: "/logistics" },
-    ],
+    key: "legal",
+    label: "Legal Defence",
+    description: "Compliance deadlines",
+    icon: ShieldCheck,
+    href: "/aegis/legal",
+    requires: "legal",
   },
-  {
-    label: "CivicOS",
-    description: "Public infrastructure",
-    icon: Landmark,
-    href: "/civic",
-  },
-  {
-    label: "SiteOS",
-    description: "On-site operations",
-    icon: HardHat,
-    href: "/site",
-  },
-];
+] as const;
 
 export function SidebarIndustrial() {
   const pathname = usePathname();
+  const org = useQuery(api.core.organizations.getMyOrganization) as
+    | { enabledModules: string[] }
+    | null
+    | undefined;
+  const enabled = new Set(org?.enabledModules ?? []);
+  const routes = ROUTES.filter((r) => !r.requires || enabled.has(r.requires));
 
   return (
     <div className="flex h-full w-64 flex-col border-r border-white/10 bg-[var(--color-brand-bg)] text-white shadow-2xl shadow-black/30">
@@ -93,6 +79,13 @@ export function SidebarIndustrial() {
             Vectis
           </p>
           <p className="text-lg font-semibold">Mission Control</p>
+        </div>
+        <div className="ml-auto hidden items-center rounded-xl bg-white/5 p-2 ring-1 ring-white/10 md:flex">
+          <OrganizationSwitcher
+            hidePersonal
+            afterCreateOrganizationUrl="/dashboard/aegis"
+            afterSelectOrganizationUrl="/dashboard/aegis"
+          />
         </div>
       </div>
 
@@ -113,12 +106,17 @@ export function SidebarIndustrial() {
         </div>
 
         <nav className="space-y-1">
+          {org === null && (
+            <div className="rounded-xl bg-white/5 p-3 text-sm text-white/70 ring-1 ring-white/10">
+              Select an organization in Clerk, then initialize it from Mission Control.
+            </div>
+          )}
           {routes.map((route) => {
             const isActive = pathname === route.href;
 
             return (
               <Link
-                key={route.href}
+                key={route.key}
                 href={route.href}
                 className={cn(
                   "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",

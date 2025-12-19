@@ -1,86 +1,110 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Truck,
-  ShieldCheck,
-  HardHat,
-  ChefHat,
-  Landmark,
-  MapPin,
-  ArrowUpRight,
-  Lock,
-  Activity,
-} from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
+import { RedirectToSignIn } from "@clerk/nextjs";
 import { Badge } from "@/components/ui/badge";
+import { Activity, ArrowUpRight, HardHat, LayoutDashboard, Lock, ShieldCheck, Truck } from "lucide-react";
 
-const modules = [
+type EnabledModule = "transport" | "depot" | "legal";
+type ModuleCard = {
+  key: string;
+  title: string;
+  desc: string;
+  icon: typeof LayoutDashboard;
+  href: string;
+  status: "live" | "beta";
+  color: string;
+  gradient: string;
+  requires?: EnabledModule;
+};
+
+const modules: ModuleCard[] = [
   {
+    key: "mission",
+    title: "Mission Control",
+    desc: "Cross-module intelligence feed and global safety score.",
+    icon: LayoutDashboard,
+    href: "/aegis",
+    status: "live",
+    color: "text-slate-900",
+    gradient: "from-slate-500/20 to-slate-500/5",
+  },
+  {
+    key: "transport",
     title: "TransportOS",
-    desc: "Fleet compliance, ADR hazardous goods tracking, and maintenance logic.",
+    desc: "Vehicles, inspections, and defects.",
     icon: Truck,
     href: "/transport",
     status: "live",
     color: "text-blue-600",
     gradient: "from-blue-500/20 to-blue-500/5",
+    requires: "transport",
   },
   {
-    title: "LogisticsOS",
-    desc: "Customer intelligence, UPRN address verification, and sales ledger analysis.",
-    icon: MapPin,
-    href: "/logistics",
-    status: "live",
-    color: "text-purple-600",
-    gradient: "from-purple-500/20 to-purple-500/5",
-  },
-  {
-    title: "AegisOS",
-    desc: "Strategic legal defence, GDPR vaults, and automated regulatory filings.",
-    icon: ShieldCheck,
-    href: "/aegis",
-    status: "live",
-    color: "text-indigo-600",
-    gradient: "from-indigo-500/20 to-indigo-500/5",
-  },
-  {
-    title: "CivicOS",
-    desc: "Planning intelligence. Anomaly detection for public comments and sentiment.",
-    icon: Landmark,
-    href: "/civic",
-    status: "live",
-    color: "text-emerald-600",
-    gradient: "from-emerald-500/20 to-emerald-500/5",
-  },
-  {
-    title: "SiteOS",
-    desc: "Autonomous safety management. Computer vision for hazard detection.",
+    key: "depot",
+    title: "DepotOS",
+    desc: "Fuel tanks and wet stock visibility.",
     icon: HardHat,
-    href: "/site",
+    href: "/depot",
     status: "live",
     color: "text-orange-600",
     gradient: "from-orange-500/20 to-orange-500/5",
+    requires: "depot",
   },
   {
-    title: "ChefOS",
-    desc: "Automated hygiene compliance and kitchen intelligence engine.",
-    icon: ChefHat,
-    href: "/chef",
-    status: "beta",
-    color: "text-rose-600",
-    gradient: "from-rose-500/20 to-rose-500/5",
+    key: "legal",
+    title: "Legal Defence",
+    desc: "Compliance deadlines and filings control.",
+    icon: ShieldCheck,
+    href: "/aegis/legal",
+    status: "live",
+    color: "text-indigo-600",
+    gradient: "from-indigo-500/20 to-indigo-500/5",
+    requires: "legal",
   },
 ];
 
-export default function DashboardGateway() {
+export default function DashboardPage() {
+  return (
+    <>
+      <AuthLoading>
+        <div className="flex h-screen w-full items-center justify-center bg-[#0f172a]">
+          <div className="animate-pulse text-white">Loading Sovereign OS...</div>
+        </div>
+      </AuthLoading>
+
+      <Unauthenticated>
+        <RedirectToSignIn />
+      </Unauthenticated>
+
+      <Authenticated>
+        <DashboardGateway />
+      </Authenticated>
+    </>
+  );
+}
+
+function DashboardGateway() {
+  const org = useQuery(api.core.organizations.getMyOrganization) as
+    | { enabledModules: string[] }
+    | null
+    | undefined;
+
+  if (org === undefined) return null;
+
+  const enabled = new Set(org?.enabledModules ?? []);
+  const visibleModules = modules.filter((m) => !m.requires || enabled.has(m.requires));
+
   return (
     <div className="min-h-screen relative overflow-hidden bg-slate-50 font-sans">
-      {/* ABSTRACT BACKGROUND MESH */}
       <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-slate-200 to-transparent -z-10" />
       <div className="absolute -top-40 -right-40 w-[800px] h-[800px] bg-blue-100/50 rounded-full blur-3xl -z-10" />
       <div className="absolute top-40 -left-20 w-[600px] h-[600px] bg-orange-50/50 rounded-full blur-3xl -z-10" />
 
       <div className="max-w-7xl mx-auto p-8 md:p-16">
-        {/* HEADER */}
         <div className="mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-slate-200 backdrop-blur-sm text-xs font-bold text-slate-600 mb-6 shadow-sm">
             <Activity className="w-3 h-3 text-green-500" />
@@ -90,19 +114,22 @@ export default function DashboardGateway() {
             Aegis Logistics <span className="text-slate-400 font-light">| Interface</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl leading-relaxed">
-            Welcome to Aegis Logistics. Select your operational environment. All telemetry streams are synchronized.
+            Select your operational environment. Links render only for modules enabled on your organization.
           </p>
         </div>
 
-        {/* BENTO GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {modules.map((mod) => (
+          {org === null && (
+            <div className="col-span-full rounded-3xl border border-slate-200 bg-white/80 p-6 text-sm text-slate-600 shadow-sm">
+              Select an organization in Clerk, then initialize it from <span className="font-semibold">Mission Control</span>.
+            </div>
+          )}
+          {visibleModules.map((mod) => (
             <Link
-              key={mod.title}
+              key={mod.key}
               href={mod.href}
               className="group relative flex flex-col justify-between p-8 rounded-3xl border border-white/40 bg-white/60 backdrop-blur-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
-              {/* Card Gradient Overlay */}
               <div
                 className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${mod.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
               />
@@ -124,9 +151,7 @@ export default function DashboardGateway() {
                 </div>
 
                 <h3 className="text-2xl font-bold text-slate-900 mb-3">{mod.title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed font-medium">
-                  {mod.desc}
-                </p>
+                <p className="text-sm text-slate-500 leading-relaxed font-medium">{mod.desc}</p>
               </div>
 
               <div className="relative z-10 mt-8 pt-6 border-t border-slate-200/60 flex items-center justify-between">
@@ -134,11 +159,7 @@ export default function DashboardGateway() {
                   Launch Module
                 </span>
                 <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:bg-slate-900 group-hover:text-white transition-all">
-                  {mod.status === "beta" ? (
-                    <Lock className="w-4 h-4" />
-                  ) : (
-                    <ArrowUpRight className="w-4 h-4" />
-                  )}
+                  {mod.status === "beta" ? <Lock className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
                 </div>
               </div>
             </Link>

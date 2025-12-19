@@ -3,17 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { ShieldCheck, LayoutDashboard, Vault, Gavel } from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { ShieldCheck, LayoutDashboard } from "lucide-react";
 
 const routes = [
   { label: "Mission Control", href: "/aegis", icon: LayoutDashboard },
   { label: "Legal Defence", href: "/aegis/legal", icon: ShieldCheck },
-  { label: "Evidence Vault", href: "/aegis/evidence", icon: Vault },
-  { label: "Regulatory Filings", href: "/aegis/filings", icon: Gavel },
 ];
 
 export function SidebarLegal() {
   const pathname = usePathname();
+  const org = useQuery(api.core.organizations.getMyOrganization) as
+    | { enabledModules: string[] }
+    | null
+    | undefined;
+  const legalEnabled = Boolean(org?.enabledModules?.includes("legal"));
 
   return (
     <div className="flex h-full w-full flex-col border-r border-white/10 bg-gradient-to-b from-indigo-950 to-indigo-900 text-white shadow-2xl shadow-black/30">
@@ -27,7 +32,9 @@ export function SidebarLegal() {
         </div>
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        {routes.map((route) => {
+        {routes
+          .filter((r) => r.href === "/aegis" || legalEnabled)
+          .map((route) => {
           const active = pathname === route.href;
           return (
             <Link
