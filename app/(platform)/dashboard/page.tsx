@@ -111,7 +111,7 @@ function DashboardGateway() {
             SYSTEMS NOMINAL
           </div>
           <h1 className="text-5xl md:text-6xl font-black text-slate-900 tracking-tight mb-4">
-            Aegis Logistics <span className="text-slate-400 font-light">| Interface</span>
+            Aegis Logistics <span className="text-slate-400 font-light">| Interface v19.6</span>
           </h1>
           <p className="text-xl text-slate-500 max-w-2xl leading-relaxed">
             Select your operational environment. Links render only for modules enabled on your organization.
