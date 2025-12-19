@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { OrganizationSwitcher, SignInButton, useAuth } from "@clerk/nextjs";
@@ -33,6 +33,14 @@ const EMPTY_VEHICLES: Vehicle[] = [];
 const EMPTY_DEFECTS: Defect[] = [];
 
 export default function TransportPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-slate-500">Loading TransportOS...</div>}>
+      <TransportContent />
+    </Suspense>
+  );
+}
+
+function TransportContent() {
   const auth = useAuth();
   const searchParams = useSearchParams();
   const highlightId = searchParams.get("defectId") || undefined;
